@@ -13,22 +13,17 @@ public abstract class Person {
     public static void setPanelWidth(int w){
         panelWidth = w;
     }
-    /**public boolean containsPoint(int x, int y){
+    public boolean containsPoint(int x, int y){
         int xSquared = (x - centerX) * (x - centerX);
         int ySquared = (y - centerY) * (y - centerY);
-        return xSquared + ySquared - radiusSquared <= 0;
-    }*/
-
+        int area = image.getIconWidth() * image.getIconHeight();
+        return xSquared + ySquared - area <= 0;
+    }
     public int getX(){
         return centerX;
     }
     public int getY(){
         return centerY;
-    }
-    public int getDirection(){
-        return direction;
-    }
-    public void setDirection(int d){
     }
     public void moveLeft()
     {
