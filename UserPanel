@@ -1,248 +1,53 @@
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.imageio.ImageIO;
 
-public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener, JavaArcade
-{
-   int healthBar, age;
-   
-   private Person baby, selectedPerson;
-   
-   private javax.swing.Timer timer;
-   private javax.swing.Timer healthTimer, ageTimer;
-   
-   private Food fruit, veg, soda, burger;
-   
-   private boolean start = false;
-   private int x,y;
-   
-   //Background image
-   Image img;
-   
-   public void BackgroundPanel(Graphics g)
-   {
-      File imgFile = new File("stage1.png");
-      try {
-         img = ImageIO.read(imgFile);
-      }catch (IOException e){
-         e.printStackTrace();
-      }
-      
-      g.drawImage(img, 0, 0, null);
-   }
-   
-   public UserPanel(int width, int height) 
-   {
-      int babyHeight, babyWidth; //Add others later
-      
-      babyHeight = height / 10;
-      babyWidth = width / 10;
-      
-      baby = new Person(300,300,"baby.png");
-      
-      fruit = new Food(89,73,"strawberry.png",5);
-      veg = new Food(210,73,"carrot.png",5);
-      soda = new Food(342,73,"soda.png",5);
-      burger = new Food(489,73,"burger.png",5);
-      
-      healthBar = 10;
-      age = 0;
-      
-      //Timer
-      timer = new javax.swing.Timer(50,this);
-      
-      //Timer goes off every 5 seconds
-      healthTimer = new javax.swing.Timer(5000, new HealthListener());
-      ageTimer = new javax.swing.Timer(5000, new AgeListener());
-      addMouseListener(new PanelListener());
-      addMouseMotionListener(new PanelMotionListener()); 
-      
-      //Do we need this?
-      setFocusable(true);
-      setFocusTraversalKeysEnabled(false);
-
-      setPreferredSize(new Dimension(width, height));
-   }
-   
-   public void actionPerformed(ActionEvent e)
-   {
-      checkStats();
-      repaint();
-   }
-   
-   public void paintComponent(Graphics g)
-   {
-      super.paintComponent(g);
-      
-      BackgroundPanel(g);
-      
-      baby.getImageIcon().paintIcon(this, g, baby.getX(), baby.getY());
-      
-      fruit.getImageIcon().paintIcon(this, g, fruit.getX(), fruit.getY());
-      veg.getImageIcon().paintIcon(this, g, veg.getX(), veg.getY());
-      soda.getImageIcon().paintIcon(this, g, soda.getX(), soda.getY());
-      burger.getImageIcon().paintIcon(this, g, burger.getX(), burger.getY());
-      
-      g.setColor(Color.white);
-      g.drawString("Health: " + healthBar, 20, getHeight()-30);
-      g.drawString("Age: " + age, 40, getHeight() - 40);
-      
-      if (!start)
-      {
-         /*g.drawString("Instructions: ... write stuff here", (getWidth() /2) - 100, getHeight()/2 + 20);
-	  	   g.drawString("(Inactive) Press enter to shoot .", (getWidth() /2) - 100, getHeight()/2 + 40);
-	  	   g.drawString("You have 3 lives to kill the enemy", (getWidth() /2) - 100, getHeight()/2+ 60);*/
-      }
-   }
-   
-   //Listeners
-   private class HealthListener implements ActionListener
-   {
-    //Because we are implementing ActionListener, we must define actionPerformed
-      public void actionPerformed (ActionEvent e)
-      {
-         healthBar--; //Every 5 seconds, lose a point
-      }
-   }
-   
-   private class AgeListener implements ActionListener
-   {
-    //Because we are implementing ActionListener, we must define actionPerformed
-      public void actionPerformed (ActionEvent e)
-      {
-         age++; //Every 5 seconds, age up
-      }
-   }
-   
-   private void checkStats()
-   {
-      Person.setPanelWidth(getWidth());
-      
-      fruit.move();
-      veg.move();
-      soda.move();
-      burger.move();
-     
-   }
-   
-   private class PanelListener extends MouseAdapter
-   {
-      public void mousePressed(MouseEvent e)
-      {
-         x = e.getX();
-         y = e.getY();
-         System.out.println("x : " + x + " y : " + y);
-         
-         if (baby.containsPoint(x, y))
-         {
-            System.out.print("true");
-            selectedPerson = baby;
-         }
-      }
-      public void mouseReleased(MouseEvent e)
-      {
-         x = e.getX();
-         y = e.getY();
-         selectedPerson = null;
-      }
-   }
-   
-   public class PanelMotionListener extends MouseMotionAdapter
-   {
-      public void mouseDragged(MouseEvent e)
-      {
-         int newX = e.getX();
-         int newY = e.getY();
-         int dx = newX - x;
-         int dy = newY -y;
-         
-         if (selectedPerson != null) 
-         {
-            selectedPerson.moveMouse(dx,dy);
-            System.out.println("moving");
-         }
-         
-         x = newX;
-         y = newY;
-         
-         //if (f.containsPoint(baby.getX(), baby.getY()))
-            //f.hide(null);
-         
-         repaint();
-         
-         
-      }
-   } 
-   
-   //Java Arcade methods
-   public boolean running()
-   {
-      if (start == true)
-         return true;
-      else
-         return false;
-   }
-   
-   public void startGame()
-   {
-      start = true;
-      timer.start();
-      healthTimer.start();
-      ageTimer.start();
-   }
-   
-   public String getGameName()
-   {
-      return "The Game of Life";
-   }
-   
-   public void pauseGame()
-   {
-      start = false;
-      timer.stop();
-      healthTimer.stop();
-      ageTimer.stop();
-   }
-   
-   public String getInstructions()
-   {
-      return "The goal of this game is to keep your health by collecting the good items in each stage.";
-   }
-   
-   public String getCredits()
-   {
-      return "Created by Erin Li and Shravanika Kumaran";
-   }
-   
-   public String getHighScore()
-   {
-      return "" + age;
-   }
-   
-   public void stopGame()
-   {
-      start = false;
-      timer.stop();
-      healthTimer.stop();
-      ageTimer.stop();
-      healthBar = 0;
-      age = 0;
-   }
-   
-   public int getPoints()
-   {
-      return age;
-   }
-   
-   public int getHealthBar()
-   {
-      return healthBar;
-   }
-   
-   public void setDisplay(GameStats d)
-   {
-      d.update(age);
-   }
+public class Person {
+    private int centerX, centerY;
+    private static int panelWidth;
+    private ImageIcon image; //import image from file
+    public Person(int x, int y, String f){
+        centerX = x;
+        centerY = y;
+        image = new ImageIcon(f);
+    }
+    public ImageIcon getImageIcon(){
+      return image;
+    }
+    public static void setPanelWidth(int w){
+        panelWidth = w;
+    }
+    public boolean containsPoint(int x, int y){
+        int xSquared = (x - centerX) * (x - centerX);
+        int ySquared = (y - centerY) * (y - centerY);
+        double area = image.getIconWidth() * image.getIconHeight();
+        return xSquared + ySquared - area<= 0; 
+    }
+    
+    /*public boolean containsFoodPoint(int x, int y){ //Fix this eventually
+        int xSquared = (x - centerX) * (x - centerX);
+        int ySquared = (y - centerY) * (y - centerY);
+        double area = image.getIconWidth() * 2 * Math.PI;
+        return xSquared + ySquared - area + 100 <= 0;
+    }*/
+    public int getX(){
+        return centerX;
+    }
+    public int getY(){
+        return centerY;
+    }
+    public void moveLeft()
+    {
+        centerX-=2;
+    }
+    public void moveRight()
+    {
+        centerX+=2;
+    }
+    public void move(int x, int w){//moves side to side
+        centerX = x - w; //setX(x - w);
+    }
+    public void moveMouse(int dx, int dy)
+    {
+        centerX += dx;
+        //dy is not needed
+    }
 }
