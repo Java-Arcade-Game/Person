@@ -19,13 +19,16 @@ public abstract class Items {
     public ImageIcon getImageIcon(){
       return image;
     }
-    public void draw(Graphics g)
-    {
-         paintIcon(this, g, getX(), getY());
+    public void draw(Component c, Graphics g){
+         if(visible)
+               image.paintIcon(c, g, getX(), getY());
     }
     public void hide(){
         visible = false;
     } 
+    public void show(){
+       visible = true;
+    }
     public static void setPanelWidth(int w){
         panelWidth = w;
     }
@@ -37,6 +40,12 @@ public abstract class Items {
     }
     public int getY(){
         return centerY;
+    }
+    public void setX(int x){
+        centerX = x;
+    }
+    public void setY(int y){
+        centerY = y;
     }
     public void setVelocity(int v){
         velocity = v;
