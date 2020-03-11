@@ -18,9 +18,16 @@ public class Person {
     public boolean containsPoint(int x, int y){
         int xSquared = (x - centerX) * (x - centerX);
         int ySquared = (y - centerY) * (y - centerY);
-        int area = image.getIconWidth() * image.getIconHeight();
-        return xSquared + ySquared - area <= 0;
+        double area = image.getIconWidth() * image.getIconHeight();
+        return xSquared + ySquared - area<= 0; 
     }
+    
+    /*public boolean containsFoodPoint(int x, int y){ //Fix this eventually
+        int xSquared = (x - centerX) * (x - centerX);
+        int ySquared = (y - centerY) * (y - centerY);
+        double area = image.getIconWidth() * 2 * Math.PI;
+        return xSquared + ySquared - area + 100 <= 0;
+    }*/
     public int getX(){
         return centerX;
     }
