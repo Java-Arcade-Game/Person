@@ -1,14 +1,16 @@
 import javax.swing.*;
-public abstract class Person {
+
+public class Person {
     private int centerX, centerY;
-    private int direction;
     private static int panelWidth;
     private ImageIcon image; //import image from file
     public Person(int x, int y, String f){
         centerX = x;
         centerY = y;
-        direction = 0;
         image = new ImageIcon(f);
+    }
+    public ImageIcon getImageIcon(){
+      return image;
     }
     public static void setPanelWidth(int w){
         panelWidth = w;
@@ -39,6 +41,6 @@ public abstract class Person {
     public void moveMouse(int dx, int dy)
     {
         centerX += dx;
-        centerY += dy;
+        //dy is not needed
     }
 }
