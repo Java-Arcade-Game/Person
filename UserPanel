@@ -22,18 +22,30 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
    private int x,y;
    
    //Background image
-   Image img;
+   Image backG0, backG1, backG2, backG3, backG4, backG5, backG6;
    
    public void BackgroundPanel(Graphics g)
    {
-      File imgFile = new File("stage1.png");
+      File imgFile0 = new File("homePage.png");
       try {
-         img = ImageIO.read(imgFile);
+         backG0 = ImageIO.read(imgFile0);
       }catch (IOException e){
          e.printStackTrace();
       }
       
-      g.drawImage(img, 0, 0, null);
+      File imgFile1 = new File("stage1.png");
+      try {
+         backG1 = ImageIO.read(imgFile1);
+      }catch (IOException e){
+         e.printStackTrace();
+      }
+      
+      if (!start) {
+         g.drawImage(backG0, 0, 0, null);
+      } else {
+         g.drawImage(backG1, 0, 0, null);
+         baby.show();
+      }
    }
    
    public void makeItemArrayLists()
@@ -59,6 +71,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
       babyWidth = width / 10;
       
       baby = new Person(300,300,"baby.png");
+      baby.hide();
       
       makeItemArrayLists();
       
@@ -95,7 +108,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
       
       BackgroundPanel(g);
       
-      baby.getImageIcon().paintIcon(this, g, baby.getX(), baby.getY());
+      baby.draw(this, g);
       
       fruit.draw(this, g);
       veg.draw(this, g);
