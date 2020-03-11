@@ -1,8 +1,10 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class Person {
     private int centerX, centerY;
     private static int panelWidth;
+    private boolean visible;
     private ImageIcon image; //import image from file
     public Person(int x, int y, String f){
         centerX = x;
@@ -11,6 +13,16 @@ public class Person {
     }
     public ImageIcon getImageIcon(){
       return image;
+    }
+    public void draw(Component c, Graphics g){
+         if(visible)
+               image.paintIcon(c, g, getX(), getY());
+    }
+    public void hide(){
+        visible = false;
+    } 
+    public void show(){
+       visible = true;
     }
     public static void setPanelWidth(int w){
         panelWidth = w;
