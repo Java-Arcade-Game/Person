@@ -1,321 +1,370 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener, JavaArcade
 {
-   int healthBar, age, timePassed;
-   
-   private Person baby, selectedPerson;
-   
-   private javax.swing.Timer timer;
-   private javax.swing.Timer stageTimers;
-   
-   private javax.swing.Timer healthTimer, ageTimer;
-   
-   private Food fruit, veg, soda, burger;
-   private Food[] foodList;
-   
-   private boolean start = false;
-   private int x,y;
-   
-   //Background image
-   Image backG0, backG1, backG2, backG3, backG4, backG5, backG6;
-   
-   public void BackgroundPanel(Graphics g)
-   {
-      File imgFile0 = new File("homePage.png");
-      try {
-         backG0 = ImageIO.read(imgFile0);
-      }catch (IOException e){
-         e.printStackTrace();
-      }
-      
-      File imgFile1 = new File("stage1.png");
-      try {
-         backG1 = ImageIO.read(imgFile1);
-      }catch (IOException e){
-         e.printStackTrace();
-      }
-      
-      if (!start) {
-         g.drawImage(backG0, 0, 0, null);
-      } else {
-         g.drawImage(backG1, 0, 0, null);
-         baby.show();
-      }
-   }
-   
-   public void makeItemArrayLists()
-   {
-      fruit = new Food(40,-90,"strawberry.png",15);
-      veg = new Food(200,-90,"carrot.png",15);
-      soda = new Food(400,-90,"soda.png",12);
-      burger = new Food(500,-90,"burger.png",12);
-      
-      foodList = new Food[4];
-      
-      foodList[0] = fruit;
-      foodList[1] = veg;
-      foodList[2] = soda;
-      foodList[3] = burger;
-   }
-   
-   public UserPanel(int width, int height) 
-   {
-      int babyHeight, babyWidth; //Add others later
-      
-      babyHeight = height / 10;
-      babyWidth = width / 10;
-      
-      baby = new Person(300,300,"baby.png");
-      baby.hide();
-      
-      makeItemArrayLists();
-      
-      healthBar = 10;
-      age = 0;
-      timePassed = 0;
-      
-      //Timer
-      timer = new javax.swing.Timer(50,this);
-      stageTimers = new javax.swing.Timer(1000, new StageTimerListener());
-      
-      //Timer goes off every 1 second
-      healthTimer = new javax.swing.Timer(1000, new HealthListener());
-      ageTimer = new javax.swing.Timer(1000, new AgeListener());
-      addMouseListener(new PanelListener());
-      addMouseMotionListener(new PanelMotionListener()); 
-      
-      //Do we need this?
-      setFocusable(true);
-      setFocusTraversalKeysEnabled(false);
+    int healthBar, age, timePassed, stage;
 
-      setPreferredSize(new Dimension(width, height));
-   }
-   
-   public void actionPerformed(ActionEvent e)
-   {
-      checkStats();
-      repaint();
-   }
-   
-   public void paintComponent(Graphics g)
-   {
-      super.paintComponent(g);
-      
-      BackgroundPanel(g);
-      
-      baby.draw(this, g);
-      
-      fruit.draw(this, g);
-      veg.draw(this, g);
-      soda.draw(this, g);
-      burger.draw(this, g);
-      
-      g.setColor(Color.white);
-      g.drawString("Health: " + healthBar, 20, getHeight()-30);
-      g.drawString("Age: " + age, 20, getHeight() - 50);
-      g.drawString("Time: " + timePassed, 20, getHeight() - 70);
-      
-      if (!start)
-      {
+    private Person baby, selectedPerson;
+
+    private javax.swing.Timer timer;
+    private javax.swing.Timer stageTimers;
+
+    private javax.swing.Timer healthTimer, ageTimer;
+
+    private Food fruit, veg, soda, burger;
+    private Food[] foodList;
+
+    private boolean start = false;
+    private int x,y;
+
+    //Background image
+    Image backG0, backG1, backG2, backG3, backG4, backG5, backG6;
+
+    public void BackgroundPanel(Graphics g) //printing different backgrounds for different stages
+    {
+        File imgFile0 = new File("homePage.png");
+        try {
+            backG0 = ImageIO.read(imgFile0);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        File imgFile1 = new File("stage1.png");
+        try {
+            backG1 = ImageIO.read(imgFile1);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        File imgFile2 = new File("stage2.png");
+        try {
+            backG2 = ImageIO.read(imgFile2);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        File imgFile3 = new File("stage3.png");
+        try {
+            backG2 = ImageIO.read(imgFile3);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        File imgFile4 = new File("stage4.png");
+        try {
+            backG2 = ImageIO.read(imgFile4);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        File imgFile5 = new File("stage5.png");
+        try {
+            backG2 = ImageIO.read(imgFile5);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        if (!start) {
+            g.drawImage(backG0, 0, 0, null);
+        } else { //switching the background based on the different stages
+            if(stage == 1) {
+                g.drawImage(backG1, 0, 0, null);
+                baby.show();
+            } else if(stage == 2){
+                g.drawImage(backG2, 0, 0, null);
+                baby.show();
+            } else if(stage == 3){
+                g.drawImage(backG3, 0, 0, null);
+                baby.show();
+            } else if(stage == 4){
+                g.drawImage(backG4, 0, 0, null);
+                baby.show();
+            } else if(stage == 5){
+                g.drawImage(backG5, 0, 0, null);
+                baby.show();
+            }
+        }
+    }
+
+    public void makeItemArrayLists()
+    {
+        fruit = new Food(40,-90,"strawberry.png",15);
+        veg = new Food(200,-90,"carrot.png",15);
+        soda = new Food(400,-90,"soda.png",12);
+        burger = new Food(500,-90,"burger.png",12);
+
+        foodList = new Food[4];
+
+        foodList[0] = fruit;
+        foodList[1] = veg;
+        foodList[2] = soda;
+        foodList[3] = burger;
+    }
+
+    public UserPanel(int width, int height)
+    {
+        int babyHeight, babyWidth; //Add others later
+
+        babyHeight = height / 10;
+        babyWidth = width / 10;
+
+        baby = new Person(300,300,"baby.png");
+        baby.hide();
+
+        makeItemArrayLists();
+
+        healthBar = 10;
+        age = 0;
+        timePassed = 0;
+        stage = 1;
+
+        //Timer
+        timer = new javax.swing.Timer(50,this);
+        stageTimers = new javax.swing.Timer(1000, new StageTimerListener()); //10 seconds timer for each stage
+
+        //Timer goes off every 1 second
+        healthTimer = new javax.swing.Timer(1000, new HealthListener());
+        ageTimer = new javax.swing.Timer(1000, new AgeListener());
+        addMouseListener(new PanelListener());
+        addMouseMotionListener(new PanelMotionListener());
+
+        //Do we need this?
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+
+        setPreferredSize(new Dimension(width, height));
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        checkStats();
+        repaint();
+    }
+
+    public void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+
+        BackgroundPanel(g);
+
+        baby.draw(this, g);
+
+        fruit.draw(this, g);
+        veg.draw(this, g);
+        soda.draw(this, g);
+        burger.draw(this, g);
+
+        g.setColor(Color.white);
+        g.drawString("Health: " + healthBar, 20, getHeight()-30);
+        g.drawString("Age: " + age, 20, getHeight() - 50);
+        g.drawString("Time: " + timePassed, 20, getHeight() - 70);
+
+        if (!start)
+        {
          /*g.drawString("Instructions: ... write stuff here", (getWidth() /2) - 100, getHeight()/2 + 20);
 	  	   g.drawString("(Inactive) Press enter to shoot .", (getWidth() /2) - 100, getHeight()/2 + 40);
 	  	   g.drawString("You have 3 lives to kill the enemy", (getWidth() /2) - 100, getHeight()/2+ 60);*/
-      }
-   }
-   
-   //Listeners
-   private class HealthListener implements ActionListener
-   {
-    //Because we are implementing ActionListener, we must define actionPerformed
-      public void actionPerformed (ActionEvent e)
-      {
-         healthBar--; //Every 5 seconds, lose a point
-      }
-   }
-   
-   private class AgeListener implements ActionListener
-   {
-    //Because we are implementing ActionListener, we must define actionPerformed
-      public void actionPerformed (ActionEvent e)
-      {
-         age++; //Every 5 seconds, age up
-      }
-   }
-   
-   private class StageTimerListener implements ActionListener
-   {
-      public void actionPerformed(ActionEvent e)
-      {
-         timePassed++; //Every 1 second time up
-      }
-   }
-   
-   private void checkStats()//Why is there a null pointer exception here
-   {
-      Person.setPanelWidth(getWidth());
+        }
+    }
 
-      for (Food f: foodList)
-      {
-         f.move();
-         
-         if (isMouseTouching(f))
-         {
-            f.hide();
-            setPosition(f);
-            f.show();
-            
-            if(f.getItemName().equals("burger.png") || f.getItemName().equals("soda.png"))
-               healthBar--;
-            else
-               healthBar++;
-         }
-         
-         if(f.getY() > 450)
-         {
-            setPosition(f);
-            f.show();
-         }
-      }
-      
-      if(healthBar <= 0 || timePassed >= 10)
-         stopGame();
-      
-   }
-   
-   public void setPosition(Food f)
-   {
-      int randomX = (int) (Math.random()*400) + 100;
-      f.setY(-90);
-      f.setX(randomX);
-   }
-   
-   public boolean isMouseTouching(Food f)
-   {
-      if (baby.containsPoint(f.getX(), f.getY()))
-         return true;
-      else
-         return false;
-   }
-   
-   private class PanelListener extends MouseAdapter
-   {
-      public void mousePressed(MouseEvent e)
-      {
-         x = e.getX();
-         y = e.getY();
-         System.out.println("x : " + x + " y : " + y);
-         
-         if (baby.containsPoint(x, y))
-         {
-            System.out.print("true");
-            selectedPerson = baby;
-         }
-      }
-      public void mouseReleased(MouseEvent e)
-      {
-         x = e.getX();
-         y = e.getY();
-         selectedPerson = null;
-      }
-   }
-   
-   public class PanelMotionListener extends MouseMotionAdapter
-   {
-      public void mouseDragged(MouseEvent e)
-      {
-         int newX = e.getX();
-         int newY = e.getY();
-         int dx = newX - x;
-         int dy = newY -y;
-         
-         if (selectedPerson != null) 
-         {
-            selectedPerson.moveMouse(dx,dy);
-            System.out.println("moving");
-         }
-         
-         x = newX;
-         y = newY;
-         
-         //if (f.containsPoint(baby.getX(), baby.getY()))
+    //Listeners
+    private class HealthListener implements ActionListener
+    {
+        //Because we are implementing ActionListener, we must define actionPerformed
+        public void actionPerformed (ActionEvent e)
+        {
+            healthBar--; //Every 5 seconds, lose a point
+        }
+    }
+
+    private class AgeListener implements ActionListener
+    {
+        //Because we are implementing ActionListener, we must define actionPerformed
+        public void actionPerformed (ActionEvent e)
+        {
+            age++; //Every 5 seconds, age up
+        }
+    }
+
+    private class StageTimerListener implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            timePassed++; //Every 1 second time up
+        }
+    }
+
+    private void checkStats()//Why is there a null pointer exception here
+    {
+        Person.setPanelWidth(getWidth());
+
+        for (Food f: foodList)
+        {
+            f.move();
+
+            if (isMouseTouching(f))
+            {
+                f.hide();
+                setPosition(f);
+                f.show();
+
+                if(f.getItemName().equals("burger.png") || f.getItemName().equals("soda.png"))
+                    healthBar--;
+                else
+                    healthBar++;
+            }
+
+            if(f.getY() > 450)
+            {
+                setPosition(f);
+                f.show();
+            }
+        }
+
+        if(healthBar <= 0 )//|| timePassed >= 10)
+            stopGame();
+        else if(timePassed >=10)
+            stage++;
+
+    }
+
+    public void setPosition(Food f)
+    {
+        int randomX = (int) (Math.random()*400) + 100;
+        f.setY(-90);
+        f.setX(randomX);
+    }
+
+    public boolean isMouseTouching(Food f)
+    {
+        if (baby.containsPoint(f.getX(), f.getY()))
+            return true;
+        else
+            return false;
+    }
+
+    private class PanelListener extends MouseAdapter
+    {
+        public void mousePressed(MouseEvent e)
+        {
+            x = e.getX();
+            y = e.getY();
+            System.out.println("x : " + x + " y : " + y);
+
+            if (baby.containsPoint(x, y))
+            {
+                System.out.print("true");
+                selectedPerson = baby;
+            }
+        }
+        public void mouseReleased(MouseEvent e)
+        {
+            x = e.getX();
+            y = e.getY();
+            selectedPerson = null;
+        }
+    }
+
+    public class PanelMotionListener extends MouseMotionAdapter
+    {
+        public void mouseDragged(MouseEvent e)
+        {
+            int newX = e.getX();
+            int newY = e.getY();
+            int dx = newX - x;
+            int dy = newY -y;
+
+            if (selectedPerson != null)
+            {
+                selectedPerson.moveMouse(dx,dy);
+                System.out.println("moving");
+            }
+
+            x = newX;
+            y = newY;
+
+            //if (f.containsPoint(baby.getX(), baby.getY()))
             //f.hide(null);
-         
-         repaint(); 
-      }
-   } 
-   
-   //Java Arcade methods
-   public boolean running()
-   {
-      if (start == true)
-         return true;
-      else
-         return false;
-   }
-   
-   public void startGame()
-   {
-      start = true;
-      timer.start();
-      healthTimer.start();
-      ageTimer.start();
-   }
-   
-   public String getGameName()
-   {
-      return "The Game of Life";
-   }
-   
-   public void pauseGame()
-   {
-      start = false;
-      timer.stop();
-      healthTimer.stop();
-      ageTimer.stop();
-   }
-   
-   public String getInstructions()
-   {
-      return "The goal of this game is to keep your health by collecting the good items in each stage.";
-   }
-   
-   public String getCredits()
-   {
-      return "Created by Erin Li and Shravanika Kumaran";
-   }
-   
-   public String getHighScore()
-   {
-      return "" + age;
-   }
-   
-   public void stopGame()
-   {
-      start = false;
-      timer.stop();
-      healthTimer.stop();
-      ageTimer.stop();
-      healthBar = 0;
-      age = 0;
-   }
-   
-   public int getPoints()
-   {
-      return age;
-   }
-   
-   public int getHealthBar()
-   {
-      return healthBar;
-   }
-   
-   public void setDisplay(GameStats d)
-   {
-      d.update(age);
-   }
+
+            repaint();
+        }
+    }
+
+    //Java Arcade methods
+    public boolean running()
+    {
+        if (start == true)
+            return true;
+        else
+            return false;
+    }
+
+    public void startGame()
+    {
+        start = true;
+        timer.start();
+        healthTimer.start();
+        ageTimer.start();
+        stageTimers.start();
+    }
+
+    public String getGameName()
+    {
+        return "The Game of Life";
+    }
+
+    public void pauseGame()
+    {
+        start = false;
+        timer.stop();
+        healthTimer.stop();
+        ageTimer.stop();
+        stageTimers.stop();
+    }
+
+    public String getInstructions()
+    {
+        return "The goal of this game is to keep your health by collecting the good items in each stage.";
+    }
+
+    public String getCredits()
+    {
+        return "Created by Erin Li and Shravanika Kumaran";
+    }
+
+    public String getHighScore()
+    {
+        return "" + age;
+    }
+
+    public void stopGame()
+    {
+        start = false;
+        timer.stop();
+        healthTimer.stop();
+        ageTimer.stop();
+        stageTimers.stop();
+        healthBar = 0;
+        age = 0;
+    }
+
+    public int getPoints()
+    {
+        return age;
+    }
+
+    public int getHealthBar()
+    {
+        return healthBar;
+    }
+
+    public void setDisplay(GameStats d)
+    {
+        d.update(age);
+    }
 }
