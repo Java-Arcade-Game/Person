@@ -50,21 +50,21 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
         File imgFile3 = new File("stage3.png");
         try {
-            backG2 = ImageIO.read(imgFile3);
+            backG3 = ImageIO.read(imgFile3);
         }catch (IOException e){
             e.printStackTrace();
         }
 
         File imgFile4 = new File("stage4.png");
         try {
-            backG2 = ImageIO.read(imgFile4);
+            backG4 = ImageIO.read(imgFile4);
         }catch (IOException e){
             e.printStackTrace();
         }
 
         File imgFile5 = new File("stage5.png");
         try {
-            backG2 = ImageIO.read(imgFile5);
+            backG5 = ImageIO.read(imgFile5);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -228,8 +228,11 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
         if(healthBar <= 0 )//|| timePassed >= 10)
             stopGame();
-        else if(timePassed >=10)
+        else if(timePassed >=10) {
+            stageTimers.restart();
             stage++;
+        }
+
 
     }
 
@@ -298,7 +301,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     //Java Arcade methods
     public boolean running()
     {
-        if (start == true)
+        if (start)
             return true;
         else
             return false;
