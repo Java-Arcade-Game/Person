@@ -9,7 +9,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 {
     int healthBar, age, timePassed, stage;
 
-    private Person baby, selectedPerson;
+    private Person baby, selectedPerson, child, student, adult, senior;
 
     private javax.swing.Timer timer;
     private javax.swing.Timer stageTimers;
@@ -18,6 +18,12 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
     private Food fruit, veg, soda, burger;
     private Food[] foodList;
+
+    private Interests phone, gaming, sports, music;
+    private Interests[] interestList;
+
+    private Grades F, tardy, A, B;
+    private Grades [] gradeList;
 
     private boolean start = false;
     private int x,y;
@@ -48,13 +54,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             e.printStackTrace();
         }
 
-        /*File imgFile3 = new File("stage3.png");
+        File imgFile3 = new File("stage3.png");
         try {
             backG3 = ImageIO.read(imgFile3);
         }catch (IOException e){
             e.printStackTrace();
         }
-
+        /*
         File imgFile4 = new File("stage4.png");
         try {
             backG4 = ImageIO.read(imgFile4);
@@ -77,26 +83,27 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
                 baby.show();
             } else if(stage == 2){
                 g.drawImage(backG2, 0, 0, null);
-                baby.show();
-            /*} else if(stage == 3){
+                child.show();
+            } else if(stage == 3){
                 g.drawImage(backG3, 0, 0, null);
-                baby.show();
-            } else if(stage == 4){
+                student.show();
+            /*} else if(stage == 4){
                 g.drawImage(backG4, 0, 0, null);
-                baby.show();
+                adult.show();
             } else if(stage == 5){
                 g.drawImage(backG5, 0, 0, null);
-                baby.show();*/
+                senior.show();*/
             }
         }
     }
 
     public void makeItemArrayLists()
     {
+        //food
         fruit = new Food(40,-90,"strawberry.png",15);
         veg = new Food(200,-90,"carrot.png",15);
         soda = new Food(400,-90,"soda.png",12);
-        burger = new Food(500,-90,"burger.png",12);
+        burger = new Food(470,-90,"burger.png",12);
 
         foodList = new Food[4];
 
@@ -104,6 +111,32 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         foodList[1] = veg;
         foodList[2] = soda;
         foodList[3] = burger;
+
+        //interests
+        phone = new Interests(40,-90,"phone.png",15);
+        gaming = new Interests(200,-90,"gaming.png",15);
+        sports = new Interests(400,-90,"sports.png",12);
+        music = new Interests(500,-90,"music.png",12);
+
+        interestList = new Interests[4];
+
+        interestList[0] = phone;
+        interestList[1] = gaming;
+        interestList[2] = sports;
+        interestList[3] = music;
+
+        //grades
+        F = new Grades(40,-90,"F.png",15);
+        tardy = new Grades(200,-90,"tardy.png",15);
+        A = new Grades(400,-90,"A.png",12);
+        B = new Grades(500,-90,"B.png",12);
+
+        gradeList = new Grades[4];
+
+        gradeList[0] = F;
+        gradeList[1] = tardy;
+        gradeList[2] = A;
+        gradeList[3] = B;
     }
 
     public UserPanel(int width, int height)
@@ -115,6 +148,12 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
         baby = new Person(300,300,"baby.png");
         baby.hide();
+
+        child = new Person(300,300,"child.png");
+        child.hide();
+
+        student = new Person(300, 300, "student.png");
+        student.hide();
 
         makeItemArrayLists();
 
@@ -151,20 +190,32 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         super.paintComponent(g);
 
         BackgroundPanel(g);
-        
+
         if (stage == 1){
-           baby.draw(this, g);
-   
-           fruit.draw(this, g);
-           veg.draw(this, g);
-           soda.draw(this, g);
-           burger.draw(this, g);
+            baby.draw(this, g);
+
+            fruit.draw(this, g);
+            veg.draw(this, g);
+            soda.draw(this, g);
+            burger.draw(this, g);
         }else if (stage == 2){
-           baby.hide(); fruit.hide(); veg.hide(); soda.hide(); burger.hide();
-           
-           //draw new items here
+            baby.hide(); fruit.hide(); veg.hide(); soda.hide(); burger.hide();
+            child.draw(this,g);
+            phone.draw(this, g);
+            gaming.draw(this, g);
+            sports.draw(this, g);
+            music.draw(this, g);
+        } else if(stage == 3){
+            baby.hide(); fruit.hide(); veg.hide(); soda.hide(); burger.hide();
+            child.hide(); phone.hide(); gaming.hide(); sports.hide(); music.hide();
+
+            student.draw(this,g);
+            F.draw(this, g);
+            tardy.draw(this, g);
+            A.draw(this, g);
+            B.draw(this, g);
         }
-           
+
 
         g.setColor(Color.white);
         g.drawString("Health: " + healthBar, 20, getHeight()-30);
@@ -214,10 +265,10 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         {
             f.move();
 
-            if (isMouseTouching(f))
+            if (isMouseTouchingFood(f))
             {
                 f.hide();
-                setPosition(f);
+                setFoodPosition(f);
                 f.show();
 
                 if(f.getItemName().equals("burger.png") || f.getItemName().equals("soda.png"))
@@ -228,28 +279,104 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
             if(f.getY() > 450)
             {
-                setPosition(f);
+                setFoodPosition(f);
                 f.show();
+            }
+        }
+
+        for (Interests i: interestList)
+        {
+            i.move();
+
+            if (isMouseTouchingInterest(i))
+            {
+                i.hide();
+                setInterestPosition(i);
+                i.show();
+
+                if(i.getItemName().equals("gaming.png") || i.getItemName().equals("phone.png"))
+                    healthBar--;
+                else
+                    healthBar++;
+            }
+
+            if(i.getY() > 450)
+            {
+                setInterestPosition(i);
+                i.show();
+            }
+        }
+
+        for (Grades g: gradeList)
+        {
+            g.move();
+
+            if (isMouseTouchingGrades(g))
+            {
+                g.hide();
+                setGradePosition(g);
+                g.show();
+
+                if(g.getItemName().equals("F.png") || g.getItemName().equals("tardy.png"))
+                    healthBar--;
+                else
+                    healthBar++;
+            }
+
+            if(g.getY() > 450)
+            {
+                setGradePosition(g);
+                g.show();
             }
         }
 
         if(healthBar <= 0 )//|| timePassed >= 10)
             stopGame();
-        else if(stage == 1 && timePassed == 10 || stage == 2 && timePassed == 20) //we have to add all the times later when all the stages are done
-            stage++;     
+        else if((stage == 1 && timePassed == 10) || (stage == 2 && timePassed == 20) || (stage == 3 && timePassed == 30)) //we have to add all the times later when all the stages are done
+            stage++;
 
     }
 
-    public void setPosition(Food f)
+    public void setFoodPosition(Food f)
     {
         int randomX = (int) (Math.random()*400) + 100;
         f.setY(-90);
         f.setX(randomX);
     }
 
-    public boolean isMouseTouching(Food f)
+    public void setInterestPosition(Interests i)
     {
-        if (baby.containsPoint(f.getX(), f.getY()))
+        int randomX = (int) (Math.random()*400) + 100;
+        i.setY(-90);
+        i.setX(randomX);
+    }
+
+    public void setGradePosition(Grades g)
+    {
+        int randomX = (int) (Math.random()*400) + 100;
+        g.setY(-90);
+        g.setX(randomX);
+    }
+
+    public boolean isMouseTouchingFood(Food f)
+    {
+        if (baby.containsPoint(f.getX(), f.getY()) )
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isMouseTouchingInterest(Interests i)
+    {
+        if (child.containsPoint(i.getX(), i.getY()) )
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isMouseTouchingGrades(Grades i)
+    {
+        if (student.containsPoint(i.getX(), i.getY()) )
             return true;
         else
             return false;
@@ -267,6 +394,18 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             {
                 System.out.print("true");
                 selectedPerson = baby;
+            }
+
+            if (child.containsPoint(x, y))
+            {
+                System.out.print("true");
+                selectedPerson = child;
+            }
+
+            if (student.containsPoint(x, y))
+            {
+                System.out.print("true");
+                selectedPerson = student;
             }
         }
         public void mouseReleased(MouseEvent e)
