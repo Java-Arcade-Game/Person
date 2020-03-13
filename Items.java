@@ -16,6 +16,11 @@ public abstract class Items {
         visible=true;
         image = new ImageIcon(f);
     }
+    public abstract int getItemCenterX();
+    public abstract int getItemCenterY();
+    public abstract void setCenters();
+    public abstract int PointVal();
+    
     public ImageIcon getImageIcon(){
       return image;
     }
