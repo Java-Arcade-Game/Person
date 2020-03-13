@@ -48,7 +48,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             e.printStackTrace();
         }
 
-        File imgFile3 = new File("stage3.png");
+        /*File imgFile3 = new File("stage3.png");
         try {
             backG3 = ImageIO.read(imgFile3);
         }catch (IOException e){
@@ -67,7 +67,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             backG5 = ImageIO.read(imgFile5);
         }catch (IOException e){
             e.printStackTrace();
-        }
+        }*/
 
         if (!start) {
             g.drawImage(backG0, 0, 0, null);
@@ -78,7 +78,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             } else if(stage == 2){
                 g.drawImage(backG2, 0, 0, null);
                 baby.show();
-            } else if(stage == 3){
+            /*} else if(stage == 3){
                 g.drawImage(backG3, 0, 0, null);
                 baby.show();
             } else if(stage == 4){
@@ -86,7 +86,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
                 baby.show();
             } else if(stage == 5){
                 g.drawImage(backG5, 0, 0, null);
-                baby.show();
+                baby.show();*/
             }
         }
     }
@@ -151,13 +151,20 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         super.paintComponent(g);
 
         BackgroundPanel(g);
-
-        baby.draw(this, g);
-
-        fruit.draw(this, g);
-        veg.draw(this, g);
-        soda.draw(this, g);
-        burger.draw(this, g);
+        
+        if (stage == 1){
+           baby.draw(this, g);
+   
+           fruit.draw(this, g);
+           veg.draw(this, g);
+           soda.draw(this, g);
+           burger.draw(this, g);
+        }else if (stage == 2){
+           baby.hide(); fruit.hide(); veg.hide(); soda.hide(); burger.hide();
+           
+           //draw new items here
+        }
+           
 
         g.setColor(Color.white);
         g.drawString("Health: " + healthBar, 20, getHeight()-30);
@@ -228,11 +235,8 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
         if(healthBar <= 0 )//|| timePassed >= 10)
             stopGame();
-        else if(timePassed >=10) {
-            stageTimers.restart();
-            stage++;
-        }
-
+        else if(stage == 1 && timePassed == 10 || stage == 2 && timePassed == 20) //we have to add all the times later when all the stages are done
+            stage++;     
 
     }
 
