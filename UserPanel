@@ -259,7 +259,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             lightning.draw(this, g);
             laughing.draw(this, g);
             exercise.draw(this, g);
-        } else if(gameOver){
+        } else if (gameOver) {
             senior.hide();
             pineapple.hide();
             lightning.hide();
@@ -285,6 +285,9 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         //Because we are implementing ActionListener, we must define actionPerformed
         public void actionPerformed(ActionEvent e) {
             healthBar--; //Every 5 seconds, lose a point
+            
+            if (stage == 5)
+               healthBar--;
         }
     }
 
@@ -394,8 +397,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         if (healthBar <= 0)//|| timePassed >= 10)
             stopGame();
         else if ((stage == 1 && timePassed == 10) || (stage == 2 && timePassed == 20) ||
-                (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40) ||
-                (stage == 5 && timePassed == 50))
+                 (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40))
             stage++;
 
     }
@@ -522,6 +524,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         stageTimers.stop();
         healthBar = 0;
         age = 0;
+        repaint();
     }
 
     public int getPoints() {
