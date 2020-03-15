@@ -31,12 +31,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     private Dangers[] dangerList;
 
     private boolean start = false;
+    private boolean gameOver = false;
     private int x, y;
 
     //Background image
     Image backG;
     File imgFile;
-    String[] imgFiles = {"homePage.png", "stage1.png", "stage2.png", "stage3.png", "stage4.png", "stage5.png"};
+    String[] imgFiles = {"homePage.png", "stage1.png", "stage2.png", "stage3.png", "stage4.png", "stage5.png", "gameOver.png"};
 
     public void BackgroundPanel(Graphics g) //printing different backgrounds for different stages
     {
@@ -67,11 +68,22 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             } else if (stage == 3) {
                 child.hide();
                 student.show();
-            } else if (stage == 4)
+            } else if (stage == 4) {
+                student.hide();
                 adult.show();
-            else if (stage == 5) {
+            } else if (stage == 5) {
+                adult.hide();
                 senior.show();
             }
+        }
+        if(gameOver){
+            imgFile = new File("gameOver.png");
+            try {
+                backG = ImageIO.read(imgFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            g.drawImage(backG, 0, 0, null);
         }
     }
 
@@ -90,10 +102,10 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         foodList[3] = burger;
 
         //interests
-        phone = new Interests(40, -90, "phone.png", 12);
-        gaming = new Interests(200, -90, "gaming.png", 12);
-        sports = new Interests(350, -90, "sports.png", 15);
-        music = new Interests(500, -90, "music.png", 15);
+        phone = new Interests(40, -90, "phone.png", 15);
+        gaming = new Interests(200, -90, "gaming.png", 15);
+        sports = new Interests(350, -90, "sports.png", 18);
+        music = new Interests(500, -90, "music.png", 18);
 
         interestList = new Interests[4];
 
@@ -103,10 +115,10 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         interestList[3] = music;
 
         //grades
-        F = new Grades(40, -90, "F.png", 12);
-        tardy = new Grades(200, -90, "tardy.png", 12);
-        A = new Grades(350, -90, "A.png", 15);
-        B = new Grades(500, -90, "B.png", 15);
+        F = new Grades(40, -90, "F.png", 18);
+        tardy = new Grades(200, -90, "tardy.png", 18);
+        A = new Grades(350, -90, "A.png", 21);
+        B = new Grades(500, -90, "B.png", 21);
 
         gradeList = new Grades[4];
 
@@ -116,10 +128,10 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         gradeList[3] = B;
 
         //jobs
-        murderer = new Jobs(40, -90, "murderer.png", 12);
-        traveler = new Jobs(200, -90, "traveler.png", 15);
-        robber = new Jobs(350, -90, "robber.png", 12);
-        fortuneCookieWriter = new Jobs(500, -90, "fortuneCookie.png", 15);
+        murderer = new Jobs(40, -90, "murderer.png", 21);
+        traveler = new Jobs(200, -90, "traveler.png", 24);
+        robber = new Jobs(350, -90, "robber.png", 21);
+        fortuneCookieWriter = new Jobs(500, -90, "fortuneCookie.png", 24);
 
         jobList = new Jobs[4];
 
@@ -129,10 +141,10 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         jobList[3] = fortuneCookieWriter;
 
         //dangers
-        pineapple = new Dangers(40, -90, "pineapple.png", 12);
-        lightning = new Dangers(200, -90, "lightning.png", 12);
-        laughing = new Dangers(350, -90, "laughing.png", 12);
-        exercise = new Dangers(500, -90, "exercise.png", 15);
+        pineapple = new Dangers(40, -90, "pineapple.png", 24);
+        lightning = new Dangers(200, -90, "lightning.png", 24);
+        laughing = new Dangers(350, -90, "laughing.png", 24);
+        exercise = new Dangers(500, -90, "exercise.png", 27);
 
         dangerList = new Dangers[4];
 
@@ -247,6 +259,12 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             lightning.draw(this, g);
             laughing.draw(this, g);
             exercise.draw(this, g);
+        } else if(gameOver){
+            senior.hide();
+            pineapple.hide();
+            lightning.hide();
+            laughing.hide();
+            exercise.hide();
         }
 
 
@@ -496,6 +514,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     public void stopGame() {
+        gameOver = true;
         start = false;
         timer.stop();
         healthTimer.stop();
