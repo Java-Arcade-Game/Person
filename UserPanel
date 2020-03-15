@@ -27,8 +27,8 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     private Jobs murderer, traveler, robber, fortuneCookieWriter;
     private Jobs[] jobList;
 
-    /*private Dangers pineapple, lightning, laughing, exercise;
-    private Dangers[] dangerList;*/
+    private Dangers pineapple, lightning, laughing, exercise;
+    private Dangers[] dangerList;
 
     private boolean start = false;
     private int x, y;
@@ -36,7 +36,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     //Background image
     Image backG;
     File imgFile;
-    String[] imgFiles = {"homePage.png", "stage1.png", "stage2.png", "stage3.png", "stage4.png"};
+    String[] imgFiles = {"homePage.png", "stage1.png", "stage2.png", "stage3.png", "stage4.png", "stage5.png"};
 
     public void BackgroundPanel(Graphics g) //printing different backgrounds for different stages
     {
@@ -69,8 +69,9 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
                 student.show();
             } else if (stage == 4)
                 adult.show();
-            /*else if(stage == 5){
-               senior.show();*/
+            else if (stage == 5) {
+                senior.show();
+            }
         }
     }
 
@@ -126,6 +127,19 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         jobList[1] = traveler;
         jobList[2] = robber;
         jobList[3] = fortuneCookieWriter;
+
+        //dangers
+        pineapple = new Dangers(40, -90, "pineapple.png", 12);
+        lightning = new Dangers(200, -90, "lightning.png", 12);
+        laughing = new Dangers(350, -90, "laughing.png", 12);
+        exercise = new Dangers(500, -90, "exercise.png", 15);
+
+        dangerList = new Dangers[4];
+
+        dangerList[0] = pineapple;
+        dangerList[1] = lightning;
+        dangerList[2] = laughing;
+        dangerList[3] = exercise;
     }
 
     public UserPanel(int width, int height) {
@@ -140,6 +154,9 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
         adult = new Person(300, 300, 4, "adult.png");
         adult.hide();
+
+        senior = new Person(300, 300, 5, "senior.png");
+        senior.hide();
 
 
         makeItemArrayLists();
@@ -188,6 +205,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             veg.hide();
             soda.hide();
             burger.hide();
+
             child.draw(this, g);
             phone.draw(this, g);
             gaming.draw(this, g);
@@ -199,22 +217,36 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             gaming.hide();
             sports.hide();
             music.hide();
+
             student.draw(this, g);
             F.draw(this, g);
             tardy.draw(this, g);
             A.draw(this, g);
             B.draw(this, g);
-        } else if (stage == 4){
+        } else if (stage == 4) {
             student.hide();
             F.hide();
             A.hide();
             tardy.hide();
             B.hide();
+
             adult.draw(this, g);
             fortuneCookieWriter.draw(this, g);
-            traveler.draw(this,g);
-            murderer.draw(this,g);
-            robber.draw(this,g);
+            traveler.draw(this, g);
+            murderer.draw(this, g);
+            robber.draw(this, g);
+        } else if (stage == 5) {
+            adult.hide();
+            fortuneCookieWriter.hide();
+            traveler.hide();
+            murderer.hide();
+            robber.hide();
+
+            senior.draw(this, g);
+            pineapple.draw(this, g);
+            lightning.draw(this, g);
+            laughing.draw(this, g);
+            exercise.draw(this, g);
         }
 
 
@@ -322,11 +354,30 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
                     j.show();
                 }
             }
+        } else if (stage == 5) {
+            for (Dangers d : dangerList) {
+                d.move();
+
+                if (isMouseTouchingItem(d)) {
+                    d.hide();
+                    setPosition(d);
+                    d.show();
+
+                    healthBar += d.PointVal();
+                }
+
+                if (d.getY() > 450) {
+                    setPosition(d);
+                    d.show();
+                }
+            }
         }
 
         if (healthBar <= 0)//|| timePassed >= 10)
             stopGame();
-        else if ((stage == 1 && timePassed == 10) || (stage == 2 && timePassed == 20) || (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40)) //we have to add all the times later when all the stages are done
+        else if ((stage == 1 && timePassed == 10) || (stage == 2 && timePassed == 20) ||
+                (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40) ||
+                (stage == 5 && timePassed == 50))
             stage++;
 
     }
@@ -346,8 +397,10 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             return child.containsPoint(2, i.getItemCenterX(), i.getItemCenterY());
         else if (stage == 3)
             return student.containsPoint(3, i.getItemCenterX(), i.getItemCenterY());
-        else if(stage == 4)
+        else if (stage == 4)
             return adult.containsPoint(4, i.getItemCenterX(), i.getItemCenterY());
+        else if (stage == 5)
+            return senior.containsPoint(5, i.getItemCenterX(), i.getItemCenterY());
         else
             return false;
     }
@@ -367,9 +420,12 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
             } else if (student.containsPoint(3, x, y)) {
                 System.out.print("true");
                 selectedPerson = student;
-            } else if(adult.containsPoint(4,x,y)) {
+            } else if (adult.containsPoint(4, x, y)) {
                 System.out.print("true");
                 selectedPerson = adult;
+            } else if (senior.containsPoint(5, x, y)) {
+                System.out.print("true");
+                selectedPerson = senior;
             }
         }
 
