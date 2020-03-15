@@ -21,6 +21,9 @@ public class Person {
         } else if (stage == 3) {
            personCenterX = x + 60;
            personCenterY = y + 58;
+        } else if (stage == 4) {
+           personCenterX = x + 52;
+           personCenterY = y + 56;
         }
            
     }
@@ -58,7 +61,12 @@ public class Person {
             leftSide = personCenterX - 39;
             top = personCenterY - 38;
             bottom = personCenterY + 57;
-        }
+        } else if (stage == 4) {
+            rightSide = personCenterX + 35;
+            leftSide = personCenterX - 25;
+            top = personCenterY - 47;
+            bottom = personCenterY + 48;
+      }
         
         return x <= rightSide && x >= leftSide && y >= top && y <= bottom;
          
