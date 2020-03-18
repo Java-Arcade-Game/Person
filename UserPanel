@@ -530,10 +530,14 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         start = true;
         gameOver = false;
         stage = 1;
+        healthBar = 10;
+        age = 0;
+        timePassed = 0;
         timer.start();
         healthTimer.start();
         ageTimer.start();
         stageTimers.start();
+        repaint();
     }
 
     public String getGameName() {
