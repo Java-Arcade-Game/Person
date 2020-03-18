@@ -1,72 +1,76 @@
 // Represents current Game Stats
 
-import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 public class GameStats extends JPanel
 {
-  private JTextField gameNameText, currentHighScorer, currentHighScore;
-  private int yourScore;
-  private JLabel yourScoreText, yourHealthText, yourTimeText;
-  private JavaArcade game;
+    private JTextField gameNameText, currentHighScorer, currentHighScore;
+    private int yourScore;
+    private JLabel yourScoreText, yourHealthText, yourTimeText;
+    private JavaArcade game;
 
-  // Constructor
-  public GameStats(JavaArcade t)
-  {
-    super(new GridLayout(2, 4, 10, 0));
-    setBorder(new EmptyBorder(0, 0, 5, 0));
-    Font gameNameFont = new Font("Monospaced", Font.BOLD, 24);
+    // Constructor
+    public GameStats(JavaArcade t)
+    {
+        super(new GridLayout(4, 4, 0, 0));
+        setBorder(new EmptyBorder(0, 0, 5, 0));
+        Font gameNameFont = new Font("Monospaced", Font.BOLD, 25);
+        Font CHS = new Font("Comic Sans MS", Font.BOLD, 15);
 
-    JLabel gName = new JLabel(" " + t.getGameName());
-    
-    gName.setForeground(Color.red);
-    gName.setFont(gameNameFont);
- 	 add(gName);
-    
-    add(new JLabel(" Current High Score:   " + t.getHighScore()));
-   
-    add(new JLabel(" "));
-    yourScoreText = new JLabel(" Your Age: " + 0);
-    add(yourScoreText);
-    Font displayFont = new Font("Monospaced", Font.BOLD, 16);
-    
-    add(new JLabel(" "));
-    yourHealthText = new JLabel(" Your Health: " + 10);
-    add(yourHealthText);
-    displayFont = new Font("Monospaced", Font.BOLD, 16);
-    
-    add(new JLabel(" "));
-    yourTimeText = new JLabel(" Time Passed: " + 0);
-    add(yourTimeText);
-    displayFont = new Font("Monospaced", Font.BOLD, 16);
-    
-    game = t;
-    
-     }
+        JLabel gName = new JLabel(" " + t.getGameName());
+        JLabel highScore = new JLabel(" Current High Score: " + t.getHighScore());
 
-  public void update(int points)
-  {
-  	yourScoreText.setText(" Age: " + points);   
-  }
-  
-  public void updateHealth(int health)
-  {
-  	yourHealthText.setText(" Your Health: " + health);   
-  }
-  
-  public void updateTime(int time)
-  {
-   yourTimeText.setText(" Time Passed: " + time);
-  }
-  
-  public void gameOver(int points)
-  {
-  
-  	if(points > Integer.parseInt(game.getHighScore())){
-  		yourScoreText.setForeground(Color.BLUE);
-  		String s = (String)JOptionPane.showInputDialog(this, "You are the new high scorer. Congratulations!\n Enter your name: ", "High Score", JOptionPane.PLAIN_MESSAGE, null, null,"name");
-  	}
-  	
-  }
+        gName.setForeground(Color.red);
+        gName.setFont(gameNameFont);
+        add(gName);
+
+        //display highScore
+        highScore.setFont(CHS);
+        add(highScore);
+
+        add(new JLabel(" "));
+        yourScoreText = new JLabel(" Your Age: " + 0);
+        yourScoreText.setFont(CHS);
+        add(yourScoreText);
+
+        add(new JLabel(" "));
+        yourHealthText = new JLabel(" Your Health: " + 10);
+        yourHealthText.setFont(CHS);
+        add(yourHealthText);
+
+        add(new JLabel(" "));
+        yourTimeText = new JLabel(" Time Passed: " + 0);
+        yourTimeText.setFont(CHS);
+        add(yourTimeText);
+
+        game = t;
+
+    }
+
+    public void update(int points)
+    {
+        yourScoreText.setText(" Age: " + points);
+        yourScore = points;
+    }
+
+    public void updateHealth(int health)
+    {
+        yourHealthText.setText(" Your Health: " + health);
+    }
+
+    public void updateTime(int time)
+    {
+        yourTimeText.setText(" Time Passed: " + time);
+    }
+
+    public void gameOver(int points)
+    {
+        if(points > Integer.parseInt(game.getHighScore())){
+            yourScoreText.setForeground(Color.BLUE);
+            String s = (String)JOptionPane.showInputDialog(this, "You are the new high scorer. Congratulations!\n Enter your name: ", "High Score", JOptionPane.PLAIN_MESSAGE, null, null,"name");
+        }
+
+    }
 }
