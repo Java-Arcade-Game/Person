@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.io.PrintWriter;
 
+
 public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener, JavaArcade {
     private int healthBar, timePassed, stage;
     private double age;
@@ -88,7 +89,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
                 e.printStackTrace();
             }
             g.drawImage(backG, 0, 0, null);
-            
+
             baby.hide();
             fruit.hide();
             veg.hide();
@@ -208,6 +209,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         timePassed = 0;
         stage = 1;
 
+
         //Timer
         timer = new javax.swing.Timer(50, this);
         stageTimers = new javax.swing.Timer(1000, new StageTimerListener()); //10 seconds timer for each stage
@@ -226,6 +228,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     public void actionPerformed(ActionEvent e) {
+        game.update(getPoints());
         checkStats();
         repaint();
     }
@@ -298,47 +301,48 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         }
 
         if (gameOver) {
-           g.setColor(Color.black);
-           g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
-           g.drawString("Age: " + (int) age, 350, 383);
-           
+            g.setColor(Color.black);
+            g.drawString("Age: " + (int) age, 350, getHeight() - 50);
+
         }
 
     }
 
     //Listeners
     private class HealthListener implements ActionListener {
+        //Because we are implementing ActionListener, we must define actionPerformed
         public void actionPerformed(ActionEvent e) {
-            healthBar--; //Every second, lose a point
-            
+            healthBar--; //Every 5 seconds, lose a point
+
             if (stage == 5)
-               healthBar--;
-               
+                healthBar--;
+
             game.updateHealth(getHealth());
         }
     }
 
     private class AgeListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) { //How fast the age goes up depending on the stage
+        //Because we are implementing ActionListener, we must define actionPerformed
+        public void actionPerformed(ActionEvent e) {
             if (stage == 1)
-               age += 0.3;
+                age += 0.3;
             else if (stage == 2)
-               age += 0.4;
+                age += 0.4;
             else if (stage == 3)
-               age += 1.4;
+                age += 1.4;
             else if (stage == 4)
-               age += 3.9;
+                age += 3.9;
             else
-               age++;
-               
+                age++;
+
             game.update(getPoints());
         }
     }
 
     private class StageTimerListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            timePassed++; //Time is measured in seconds
-            
+            timePassed++; //Every 1 second time up
+
             game.updateTime(timePassed);
         }
     }
@@ -436,7 +440,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         if (healthBar <= 0)//|| timePassed >= 10)
             stopGame();
         else if ((stage == 1 && timePassed == 10) || (stage == 2 && timePassed == 20) ||
-                 (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40))
+                (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40))
             stage++;
 
     }
@@ -524,6 +528,8 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
     public void startGame() {
         start = true;
+        gameOver = false;
+        stage = 1;
         timer.start();
         healthTimer.start();
         ageTimer.start();
@@ -558,7 +564,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         } catch (Exception e) {
             System.out.println("File Not Found.");
         }
-        
+
         return "" + highScore;
     }
 
@@ -572,34 +578,34 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         healthBar = 0;
         stage = 0;
         repaint();
-        
+        game.gameOver(getPoints());
         if (Integer.parseInt(getHighScore()) < (int) age)
         {
             try {
-               PrintWriter writer = new PrintWriter(new File("highScores.txt"));
-               writer.println((int) age);
-               writer.close();
-             } catch (Exception e) {
-               System.out.print("File not Found");
-             }
+                PrintWriter writer = new PrintWriter(new File("highScores.txt"));
+                writer.println((int) age);
+                writer.close();
+            } catch (Exception e) {
+                System.out.print("File not Found");
+            }
         }
+
     }
 
     public int getPoints() {
         return (int) age;
     }
-    
+
     public int getHealth() {
         return healthBar;
     }
-    
+
     public int getTime() {
         return timePassed;
     }
 
     public void setDisplay(GameStats d) {
         game = d;
-        
         d.update(getPoints());
         d.updateHealth(getHealth());
         d.updateTime(getTime());
