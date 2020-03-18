@@ -224,6 +224,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     public void actionPerformed(ActionEvent e) {
+        game.update(getPoints());
         checkStats();
         repaint();
     }
@@ -556,6 +557,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     public void stopGame() {
         gameOver = true;
         start = false;
+        game.gameOver(getPoints());
         timer.stop();
         healthTimer.stop();
         ageTimer.stop();
