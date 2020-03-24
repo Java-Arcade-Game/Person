@@ -1,3 +1,11 @@
+/**
+ * @(#)UserPanel.java
+ *
+ * UserPanel is the main class representing the player and items as well as counting the health, age and time
+ *
+ * @author Erin Li and Shravanika Kumaran
+ * @version 2.00 2020/3/24
+ */
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -9,28 +17,35 @@ import java.io.PrintWriter;
 
 
 public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener, JavaArcade {
+    //health, time and age variables
     private int healthBar, timePassed, stage;
     private double age;
 
+    //Different Person for different stages controlled by the player
     private Person baby, selectedPerson, child, student, adult, senior;
 
+    //timer variables
     private javax.swing.Timer timer;
     private javax.swing.Timer stageTimers;
-
     private javax.swing.Timer healthTimer, ageTimer;
 
+    //Food variables for the first stage
     private Food fruit, veg, soda, burger;
     private Food[] foodList;
 
+    //Interest variables for the second stage
     private Interests phone, gaming, sports, music;
     private Interests[] interestList;
 
+    //Grades variables for the third stage
     private Grades F, tardy, A, B;
     private Grades[] gradeList;
 
+    //Jobs variables for the fourth stage
     private Jobs murderer, traveler, robber, fortuneCookieWriter;
     private Jobs[] jobList;
 
+    //Danger Variables for the last stage
     private Dangers pineapple, lightning, laughing, exercise;
     private Dangers[] dangerList;
 
@@ -118,11 +133,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         }
     }
 
-    public void makeItemArrayLists() {
+    public void makeItemArrayLists() { //Array list for items in each stage and setting them to different velocity
+        //as the player move on to different stages, the speed for the items will increase making the game more challenging
+
         //food
-        fruit = new Food(40, -90, "strawberry.png", 15);
+        fruit = new Food(40, -90, "strawberry.png", 15); //the items that will add points will be faster
         veg = new Food(200, -90, "carrot.png", 15);
-        soda = new Food(350, -90, "soda.png", 12);
+        soda = new Food(350, -90, "soda.png", 12); //the items that will lose points will move slower
         burger = new Food(470, -90, "burger.png", 12);
 
         foodList = new Food[4];
@@ -186,6 +203,8 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     public UserPanel(int width, int height) {
+
+        //creating different person objects for specific stages
         baby = new Person(300, 300, 1, "baby.png");
         baby.hide();
 
@@ -211,7 +230,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
 
         //Timer
-        timer = new javax.swing.Timer(50, this);
+        timer = new javax.swing.Timer(50, this); //0.5 second timer for decreasing health
         stageTimers = new javax.swing.Timer(1000, new StageTimerListener()); //10 seconds timer for each stage
 
         //Timer goes off every 1 second
@@ -220,20 +239,19 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         addMouseListener(new PanelListener());
         addMouseMotionListener(new PanelMotionListener());
 
-        //Do we need this?
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
 
         setPreferredSize(new Dimension(width, height));
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) { //updating the points and stats
         game.update(getPoints());
         checkStats();
         repaint();
     }
 
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) { //painting different background and items for different stages of the game
         super.paintComponent(g);
 
         BackgroundPanel(g);
@@ -309,12 +327,12 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     //Listeners
-    private class HealthListener implements ActionListener {
-        //Because we are implementing ActionListener, we must define actionPerformed
-        public void actionPerformed(ActionEvent e) {
-            healthBar--; //Every 5 seconds, lose a point
 
-            if (stage == 5)
+    private class HealthListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            healthBar--; //Every second will lose one health point
+
+            if (stage == 5)//For the last stage every second will lose two points making it more challenging
                 healthBar--;
 
             game.updateHealth(getHealth());
@@ -322,8 +340,8 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     private class AgeListener implements ActionListener {
-        //Because we are implementing ActionListener, we must define actionPerformed
         public void actionPerformed(ActionEvent e) {
+            //for different stages the age increase is different in order to line up with real life
             if (stage == 1)
                 age += 0.3;
             else if (stage == 2)
@@ -341,13 +359,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
     private class StageTimerListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            timePassed++; //Every 1 second time up
+            timePassed++; //Every second timePassed will add one
 
             game.updateTime(timePassed);
         }
     }
 
-    private void checkStats() {
+    private void checkStats() { //check stats of each item if the player caught it or not
         Person.setPanelWidth(getWidth());
 
         if (stage == 1) {
@@ -356,13 +374,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
                 if (isMouseTouchingItem(f)) {
                     f.hide();
-                    setPosition(f);
+                    setPosition(f); //respawn the food that got caught
                     f.show();
 
                     healthBar += f.PointVal();
                 }
 
-                if (f.getY() > 450) {
+                if (f.getY() > 450) { //if the food wasn't caught and got out of the boarder then respawn too
                     setPosition(f);
                     f.show();
                 }
@@ -373,13 +391,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
                 if (isMouseTouchingItem(i)) {
                     i.hide();
-                    setPosition(i);
+                    setPosition(i); //respawn the interest that got caught
                     i.show();
 
                     healthBar += i.PointVal();
                 }
 
-                if (i.getY() > 450) {
+                if (i.getY() > 450) { //if the interest wasn't caught and got out of the boarder then respawn too
                     setPosition(i);
                     i.show();
                 }
@@ -390,13 +408,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
                 if (isMouseTouchingItem(g)) {
                     g.hide();
-                    setPosition(g);
+                    setPosition(g); //respawn the grade that got caught
                     g.show();
 
                     healthBar += g.PointVal();
                 }
 
-                if (g.getY() > 450) {
+                if (g.getY() > 450) { //if the grade wasn't caught and got out of the boarder then respawn too
                     setPosition(g);
                     g.show();
                 }
@@ -407,13 +425,13 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
                 if (isMouseTouchingItem(j)) {
                     j.hide();
-                    setPosition(j);
+                    setPosition(j); //respawn the job that got caught
                     j.show();
 
                     healthBar += j.PointVal();
                 }
 
-                if (j.getY() > 450) {
+                if (j.getY() > 450) { //if the job wasn't caught and got out of the boarder then respawn too
                     setPosition(j);
                     j.show();
                 }
@@ -424,34 +442,36 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
 
                 if (isMouseTouchingItem(d)) {
                     d.hide();
-                    setPosition(d);
+                    setPosition(d); //respawn the danger that got caught
                     d.show();
 
                     healthBar += d.PointVal();
                 }
 
-                if (d.getY() > 450) {
+                if (d.getY() > 450) { //if the danger wasn't caught and got out of the boarder then respawn too
                     setPosition(d);
                     d.show();
                 }
             }
         }
 
-        if (healthBar <= 0)//|| timePassed >= 10)
+        if (healthBar <= 0)//if health is equal or below 0 then game is over
             stopGame();
         else if ((stage == 1 && timePassed == 10) || (stage == 2 && timePassed == 20) ||
-                (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40))
+                (stage == 3 && timePassed == 30) || (stage == 4 && timePassed == 40)) //change stages after 10 seconds
             stage++;
 
     }
 
-    public void setPosition(Items i) {
+    //polymorphism applies here
+    public void setPosition(Items i) { //giving the item an random x position for respawn
         int randomX = (int) (Math.random() * 400) + 100;
         i.setY(-90);
         i.setX(randomX);
     }
 
-    public boolean isMouseTouchingItem(Items i) {
+    //polymorphism applies here
+    public boolean isMouseTouchingItem(Items i) { //checking if the player is touching the item
         i.setCenters();
 
         if (stage == 1)
@@ -469,7 +489,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     private class PanelListener extends MouseAdapter {
-        public void mousePressed(MouseEvent e) {
+        public void mousePressed(MouseEvent e) { //checking if the mouse is touching the Person
             x = e.getX();
             y = e.getY();
             System.out.println("x : " + x + " y : " + y);
@@ -500,7 +520,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
     }
 
     public class PanelMotionListener extends MouseMotionAdapter {
-        public void mouseDragged(MouseEvent e) {
+        public void mouseDragged(MouseEvent e) { //dragging the Person using mouse
             int newX = e.getX();
             int dx = newX - x;
 
@@ -560,7 +580,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         return "Created by Erin Li and Shravanika Kumaran";
     }
 
-    public String getHighScore() {
+    public String getHighScore() { //getting the highest score from the file highScores.txt
         int highScore = 0;
         try {
             Scanner fileReader = new Scanner(new File("highScores.txt"));
@@ -583,7 +603,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         stage = 0;
         repaint();
         game.gameOver(getPoints());
-        if (Integer.parseInt(getHighScore()) < (int) age)
+        if (Integer.parseInt(getHighScore()) < (int) age) //if the player got a higher score than high score then the file will update
         {
             try {
                 PrintWriter writer = new PrintWriter(new File("highScores.txt"));
@@ -608,7 +628,7 @@ public class UserPanel extends JPanel implements /*KeyListener,*/ ActionListener
         return timePassed;
     }
 
-    public void setDisplay(GameStats d) {
+    public void setDisplay(GameStats d) { //updating points, health and time that's on the top of the game
         game = d;
         d.update(getPoints());
         d.updateHealth(getHealth());
