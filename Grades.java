@@ -1,3 +1,11 @@
+/* The Grades class extends Items and it contains 4 items. The F and tardy are worth -1 point 
+if collected and the A and B are worth 1 point. 
+
+Authors: Erin Li & Shravanika Kumaran
+
+Version: 1.0 03/24/2020
+*/
+
 import java.util.ArrayList;
 
 
@@ -15,6 +23,7 @@ public class Grades extends Items{
         fillArray();
     }
     
+    //These are the hard coded centers of all the four items. This method is called inside UserPanel as the item falls, so the center is adjusted accordingly.
     public void setCenters() {
         if (getItemName().equals("F.png")) {
             centerX = getX() + 36;
