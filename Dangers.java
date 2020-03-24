@@ -1,3 +1,12 @@
+/* The Dangers class extends Items and it contains 4 items. The pinapple, lightning and laughing are 
+worth -1 point if collected and the exercise is worth 1 point. 
+
+Authors: Erin Li & Shravanika Kumaran
+
+Version: 1.0 03/24/2020
+*/
+
+
 import java.util.ArrayList;
 
 
@@ -15,6 +24,7 @@ public class Dangers extends Items{
         fillArray();
     }
     
+    //These are the hard coded centers of all the four items. This method is called inside UserPanel as the item falls, so the center is adjusted accordingly.
     public void setCenters() {
         if (getItemName().equals("pineapple.png")) {
             centerX = getX() + 50;
